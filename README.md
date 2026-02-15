@@ -17,31 +17,45 @@ CipherCourt provides a comprehensive framework for auditing data sources used in
 
 ### Modular Connectors
 
+**Local CSV Connectors** (with sample data):
+- **LocalCSVMatchResultsConnector** - Audit match results from CSV files
+- **LocalCSVOddsConnector** - **Hard FAIL rules** for post-match odds detection
+
+**Legacy Connectors**:
 - **Match Results** - Audit ATP, Challenger, and ITF match results
 - **Match Stats** - Validate detailed match statistics
 - **Pre-match Odds** - Critical timestamp validation for odds snapshots
 - **Venue Metadata** - Verify tournament and court information
 - **License Status** - Track data source license compliance
 
+### Hard FAIL Rules
+
+The LocalCSVOddsConnector enforces **critical anti-leakage rules**:
+- ❌ **FAIL** if `available_at >= match_start_time` (look-ahead bias)
+- ❌ **FAIL** if `snapshot_timestamp >= match_start_time`
+- Detailed violation reporting with timestamps and delays
+
 ### Report Formats
 
 Generate audit reports in multiple formats:
-- JSON (machine-readable)
-- CSV (spreadsheet-compatible)
-- Markdown (human-readable)
+- **audit_summary.json** - Machine-readable summary
+- **audit_report.md** - Human-readable Markdown report
+- **audit_report_*.csv** - Spreadsheet-compatible format
+
+Reports are saved to `data/audit_outputs/` by default.
 
 ### CLI Interface
 
 Simple command-line interface for running audits:
 ```bash
-# Run full audit
-ciphercourt audit
-
-# Use custom configuration
+# Run full audit with sample data
 ciphercourt audit -c config.yaml
 
 # Audit specific connectors
-ciphercourt audit -n match_results -n odds
+ciphercourt audit -n local_csv_match_results -n local_csv_odds
+
+# Test with leakage data (should FAIL)
+ciphercourt audit -c config_leakage_test.yaml -n local_csv_odds
 
 # Generate specific report formats
 ciphercourt audit -f json -f markdown
@@ -65,53 +79,112 @@ pip install -e ".[dev]"
 
 ## Quick Start
 
-### 1. Generate Configuration File
+### 1. Run with Sample Data
+
+The repository includes sample CSV data to get started immediately:
 
 ```bash
-ciphercourt init-config -o config.yaml
+# Run audit with included sample data
+ciphercourt audit -c config.yaml
+
+# Test leakage detection (should FAIL)
+ciphercourt audit -c config_leakage_test.yaml -n local_csv_odds
 ```
 
-### 2. Edit Configuration
+Sample data is located in `data/samples/`:
+- `match_results.csv` - 10 match records with proper schemas
+- `odds.csv` - 20 clean odds snapshots
+- `odds_with_leakage.csv` - Odds with post-match timestamps (for testing)
 
-Edit `config.yaml` to configure data sources:
+### 2. Check Results
 
+Reports are generated in `data/audit_outputs/`:
+```bash
+cat data/audit_outputs/audit_report.md
+cat data/audit_outputs/audit_summary.json
+```
+
+### 3. Use Your Own Data
+
+Create CSV files following the required schemas:
+
+**Match Results CSV:**
+```csv
+match_id,date,tournament,circuit,player1,player2,score,winner,match_start_time,available_at
+M001,2024-01-15,Australian Open,ATP,Player A,Player B,6-4 6-3,Player A,2024-01-15T10:00:00Z,2024-01-15T09:00:00Z
+```
+
+**Odds CSV:**
+```csv
+match_id,snapshot_timestamp,player1_odds,player2_odds,bookmaker,available_at,match_start_time
+M001,2024-01-15T08:00:00Z,1.85,2.10,Pinnacle,2024-01-15T08:00:00Z,2024-01-15T10:00:00Z
+```
+
+Update `config.yaml`:
 ```yaml
-match_results:
-  circuits:
-    - ATP
-    - Challenger
-    - ITF
-  data_path: /path/to/match/data
+local_csv_match_results:
+  csv_path: path/to/your/match_results.csv
 
-odds:
-  bookmakers:
-    - Pinnacle
-    - Bet365
-  data_path: /path/to/odds/data
-```
-
-### 3. Run Audit
-
-```bash
-ciphercourt audit -c config.yaml -o ./reports
+local_csv_odds:
+  csv_path: path/to/your/odds.csv
 ```
 
 ## Usage Examples
 
-### Python API
+### Python API with Local CSV
 
 ```python
 from ciphercourt import AuditFramework
 from ciphercourt.reports import generate_reports
 
-# Create audit framework
-framework = AuditFramework()
+# Configure with CSV paths
+config = {
+    "local_csv_match_results": {
+        "csv_path": "data/samples/match_results.csv"
+    },
+    "local_csv_odds": {
+        "csv_path": "data/samples/odds.csv"
+    }
+}
 
-# Run full audit
-results = framework.run_audit()
+# Create audit framework
+framework = AuditFramework(config)
+
+# Run audit
+results = framework.run_audit(
+    connectors=["local_csv_match_results", "local_csv_odds"]
+)
 
 # Generate reports
-generate_reports(results, output_dir="./reports")
+generate_reports(results, output_dir="data/audit_outputs")
+
+# Check for failures
+if results["summary"]["failed"] > 0:
+    print("⚠️ CRITICAL ISSUES DETECTED:")
+    for issue in results["summary"]["critical_issues"]:
+        print(f"  - {issue}")
+```
+
+### Leakage Detection Example
+
+```python
+config = {
+    "local_csv_odds": {
+        "csv_path": "data/samples/odds_with_leakage.csv"
+    }
+}
+
+framework = AuditFramework(config)
+results = framework.run_audit(connectors=["local_csv_odds"])
+
+# Check leakage status
+odds_result = results["results"]["local_csv_odds"]
+if odds_result["overall_status"] == "fail":
+    leakage = odds_result["leakage_check"]
+    violations = leakage["checks"]["post_match_odds"]["violations"]
+    
+    for v in violations:
+        print(f"Match {v['match_id']}: odds available {v['delay_seconds']}s AFTER match start")
 ```
 
 ### Custom Configuration
