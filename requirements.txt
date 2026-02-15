@@ -1,0 +1,5 @@
+# CipherCourt Requirements
+# For development, use: pip install -e ".[dev]"
+
+pyyaml>=6.0
+click>=8.0
