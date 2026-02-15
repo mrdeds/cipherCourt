@@ -1,0 +1,36 @@
+# CipherCourt Configuration File
+# This is NOT a betting bot configuration.
+# It configures the data availability audit framework for pre-match tennis modeling.
+
+# Match Results Configuration
+match_results:
+  circuits:
+    - ATP
+    - Challenger
+    - ITF
+  data_path: null  # Path to match results data (if applicable)
+
+# Match Statistics Configuration
+match_stats:
+  data_path: null  # Path to match stats data (if applicable)
+
+# Pre-match Odds Configuration
+odds:
+  bookmakers: []  # List of bookmaker sources to audit
+  data_path: null  # Path to odds data (if applicable)
+
+# Venue Metadata Configuration
+venue:
+  data_path: null  # Path to venue data (if applicable)
+
+# License Status Configuration
+license:
+  sources: []  # List of data sources to check licenses for
+
+# Report Generation Configuration
+reports:
+  output_dir: .
+  formats:
+    - json
+    - csv
+    - markdown
