@@ -49,8 +49,6 @@ htmlcov/
 *.log
 /tmp/
 
-# Reports output
-reports/
-*.csv
-*.json
-audit_*.md
+# Reports output (but not sample data)
+data/audit_outputs/
+

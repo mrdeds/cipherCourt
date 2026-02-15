@@ -10,6 +10,8 @@ from ciphercourt.connectors.match_stats import MatchStatsConnector
 from ciphercourt.connectors.odds import OddsConnector
 from ciphercourt.connectors.venue import VenueConnector
 from ciphercourt.connectors.license import LicenseConnector
+from ciphercourt.connectors.local_csv_match_results import LocalCSVMatchResultsConnector
+from ciphercourt.connectors.local_csv_odds import LocalCSVOddsConnector
 
 
 class AuditFramework:
@@ -36,17 +38,28 @@ class AuditFramework:
         
     def _initialize_connectors(self):
         """Initialize all data connectors based on configuration."""
-        # Initialize match results connector
-        match_results_config = self.config.get("match_results", {})
-        self.connectors.append(MatchResultsConnector(match_results_config))
+        # Initialize local CSV connectors (priority)
+        local_csv_match_config = self.config.get("local_csv_match_results", {})
+        if local_csv_match_config.get("csv_path"):
+            self.connectors.append(LocalCSVMatchResultsConnector(local_csv_match_config))
+        
+        local_csv_odds_config = self.config.get("local_csv_odds", {})
+        if local_csv_odds_config.get("csv_path"):
+            self.connectors.append(LocalCSVOddsConnector(local_csv_odds_config))
+        
+        # Initialize legacy connectors only if no local CSV connectors
+        if not any(isinstance(c, LocalCSVMatchResultsConnector) for c in self.connectors):
+            match_results_config = self.config.get("match_results", {})
+            self.connectors.append(MatchResultsConnector(match_results_config))
         
         # Initialize match stats connector
         match_stats_config = self.config.get("match_stats", {})
         self.connectors.append(MatchStatsConnector(match_stats_config))
         
-        # Initialize odds connector
-        odds_config = self.config.get("odds", {})
-        self.connectors.append(OddsConnector(odds_config))
+        # Initialize legacy odds connector only if no local CSV connector
+        if not any(isinstance(c, LocalCSVOddsConnector) for c in self.connectors):
+            odds_config = self.config.get("odds", {})
+            self.connectors.append(OddsConnector(odds_config))
         
         # Initialize venue connector
         venue_config = self.config.get("venue", {})

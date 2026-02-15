@@ -1,0 +1,6 @@
+Source,Overall Status,Availability Status,Data Quality Status,Timestamps Status,Leakage Check Status,Issues
+local_csv_match_results,pass,pass,pass,pass,pass,None
+local_csv_odds,pass,pass,pass,pass,pass,None
+match_stats,warning,pass,warning,warning,pass,Found 50 matches with incomplete stats; Found 3 statistical inconsistencies; Found 2 stats with misaligned timestamps
+venue_metadata,warning,pass,warning,warning,warning,Found 15 venues with incomplete metadata; Found 2 surface type inconsistencies; Found 5 venues with stale metadata; Found 2 suspicious retroactive metadata changes
+license_status,warning,pass,warning,warning,pass,Found 1 incomplete license records; Warning: 1 licenses expiring within 30 days

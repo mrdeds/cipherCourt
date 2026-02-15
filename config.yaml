@@ -2,7 +2,15 @@
 # This is NOT a betting bot configuration.
 # It configures the data availability audit framework for pre-match tennis modeling.
 
-# Match Results Configuration
+# Local CSV Match Results Configuration
+local_csv_match_results:
+  csv_path: data/samples/match_results.csv
+
+# Local CSV Odds Configuration
+local_csv_odds:
+  csv_path: data/samples/odds.csv
+
+# Match Results Configuration (legacy)
 match_results:
   circuits:
     - ATP
@@ -14,7 +22,7 @@ match_results:
 match_stats:
   data_path: null  # Path to match stats data (if applicable)
 
-# Pre-match Odds Configuration
+# Pre-match Odds Configuration (legacy)
 odds:
   bookmakers: []  # List of bookmaker sources to audit
   data_path: null  # Path to odds data (if applicable)
@@ -29,7 +37,7 @@ license:
 
 # Report Generation Configuration
 reports:
-  output_dir: .
+  output_dir: data/audit_outputs
   formats:
     - json
     - csv

@@ -52,6 +52,8 @@ def main():
     "connectors",
     multiple=True,
     type=click.Choice([
+        "local_csv_match_results",
+        "local_csv_odds",
         "match_results",
         "match_stats",
         "pre_match_odds",
@@ -101,6 +103,10 @@ def audit(config: Optional[str],
         audit_config = get_default_config()
         if verbose:
             click.echo("✓ Using default configuration")
+    
+    # Use output_dir from config if not specified on command line
+    if output_dir == ".":
+        output_dir = audit_config.get("reports", {}).get("output_dir", ".")
     
     # Initialize audit framework
     if verbose:

@@ -1,0 +1,399 @@
+{
+  "audit_framework": "CipherCourt",
+  "audit_timestamp": "2026-02-15T05:33:21.418677",
+  "connectors_audited": [
+    "local_csv_match_results",
+    "local_csv_odds",
+    "match_stats",
+    "venue_metadata",
+    "license_status"
+  ],
+  "results": {
+    "local_csv_match_results": {
+      "source": "local_csv_match_results",
+      "audit_timestamp": "2026-02-15T05:33:21.418684",
+      "availability": {
+        "status": "pass",
+        "details": {
+          "csv_path": "data/samples/match_results.csv",
+          "records_loaded": 10,
+          "file_size_bytes": 1408
+        },
+        "issues": []
+      },
+      "data_quality": {
+        "status": "pass",
+        "checks": {
+          "required_fields": {
+            "expected": [
+              "match_id",
+              "date",
+              "tournament",
+              "circuit",
+              "player1",
+              "player2",
+              "score",
+              "winner",
+              "match_start_time",
+              "available_at"
+            ],
+            "missing": [],
+            "status": "pass"
+          },
+          "completeness": {
+            "total_records": 10,
+            "complete_records": 10,
+            "incomplete_count": 0,
+            "completeness_rate": 1.0
+          },
+          "duplicates": {
+            "total_records": 10,
+            "unique_records": 10,
+            "duplicate_count": 0
+          }
+        },
+        "issues": []
+      },
+      "timestamps": {
+        "status": "pass",
+        "checks": {
+          "timestamp_format": {
+            "invalid_count": 0,
+            "examples": []
+          },
+          "temporal_ordering": {
+            "out_of_order_count": 0,
+            "examples": []
+          }
+        },
+        "issues": []
+      },
+      "leakage_check": {
+        "status": "pass",
+        "checks": {
+          "future_dates": {
+            "future_count": 0,
+            "examples": []
+          }
+        },
+        "issues": []
+      },
+      "audit_duration_seconds": 8.7e-05,
+      "overall_status": "pass"
+    },
+    "local_csv_odds": {
+      "source": "local_csv_odds",
+      "audit_timestamp": "2026-02-15T05:33:21.418777",
+      "availability": {
+        "status": "pass",
+        "details": {
+          "csv_path": "data/samples/odds.csv",
+          "records_loaded": 20,
+          "file_size_bytes": 1818,
+          "unique_matches": 10
+        },
+        "issues": []
+      },
+      "data_quality": {
+        "status": "pass",
+        "checks": {
+          "required_fields": {
+            "expected": [
+              "match_id",
+              "snapshot_timestamp",
+              "player1_odds",
+              "player2_odds",
+              "bookmaker",
+              "available_at",
+              "match_start_time"
+            ],
+            "missing": [],
+            "status": "pass"
+          },
+          "completeness": {
+            "total_snapshots": 20,
+            "complete_snapshots": 20,
+            "incomplete_count": 0,
+            "completeness_rate": 1.0
+          },
+          "odds_validity": {
+            "invalid_count": 0,
+            "examples": []
+          }
+        },
+        "issues": []
+      },
+      "timestamps": {
+        "status": "pass",
+        "checks": {
+          "timestamp_format": {
+            "invalid_count": 0,
+            "examples": []
+          }
+        },
+        "issues": []
+      },
+      "leakage_check": {
+        "status": "pass",
+        "checks": {
+          "post_match_odds": {
+            "post_match_count": 0,
+            "violations": []
+          },
+          "late_snapshots": {
+            "late_count": 0,
+            "examples": []
+          }
+        },
+        "issues": []
+      },
+      "audit_duration_seconds": 0.000108,
+      "overall_status": "pass"
+    },
+    "match_stats": {
+      "source": "match_stats",
+      "audit_timestamp": "2026-02-15T05:33:21.418891",
+      "availability": {
+        "status": "pass",
+        "details": {
+          "data_source_available": true,
+          "last_update": "2026-02-15T05:33:21.418894"
+        },
+        "issues": []
+      },
+      "data_quality": {
+        "status": "warning",
+        "checks": {
+          "required_stats": {
+            "expected": [
+              "aces",
+              "double_faults",
+              "first_serve_pct",
+              "first_serve_points_won",
+              "second_serve_points_won",
+              "break_points_faced",
+              "break_points_saved",
+              "service_games",
+              "return_games"
+            ],
+            "status": "pass"
+          },
+          "completeness": {
+            "total_matches": 1000,
+            "matches_with_stats": 950,
+            "missing_stats_count": 50,
+            "coverage_rate": 0.95
+          },
+          "consistency": {
+            "total_matches_checked": 950,
+            "inconsistencies": 3,
+            "consistency_rate": 0.997
+          }
+        },
+        "issues": [
+          "Found 50 matches with incomplete stats",
+          "Found 3 statistical inconsistencies"
+        ]
+      },
+      "timestamps": {
+        "status": "warning",
+        "checks": {
+          "match_result_alignment": {
+            "total_matches": 950,
+            "aligned_count": 948,
+            "misaligned_count": 2
+          }
+        },
+        "issues": [
+          "Found 2 stats with misaligned timestamps"
+        ]
+      },
+      "leakage_check": {
+        "status": "pass",
+        "checks": {
+          "premature_stats": {
+            "premature_count": 0,
+            "total_checked": 950
+          }
+        },
+        "issues": []
+      },
+      "audit_duration_seconds": 1.3e-05,
+      "overall_status": "warning"
+    },
+    "venue_metadata": {
+      "source": "venue_metadata",
+      "audit_timestamp": "2026-02-15T05:33:21.418907",
+      "availability": {
+        "status": "pass",
+        "details": {
+          "venue_data_available": true,
+          "last_update": "2026-02-15T05:33:21.418910"
+        },
+        "issues": []
+      },
+      "data_quality": {
+        "status": "warning",
+        "checks": {
+          "required_fields": {
+            "expected": [
+              "venue_name",
+              "city",
+              "country",
+              "surface",
+              "court_speed",
+              "altitude",
+              "tournament_level"
+            ],
+            "status": "pass"
+          },
+          "completeness": {
+            "total_venues": 500,
+            "complete_venues": 485,
+            "incomplete_venues": 15,
+            "completeness_rate": 0.97
+          },
+          "surface_consistency": {
+            "total_venues": 500,
+            "consistent_surfaces": 498,
+            "inconsistencies": 2,
+            "valid_surfaces": [
+              "hard",
+              "clay",
+              "grass",
+              "carpet"
+            ]
+          }
+        },
+        "issues": [
+          "Found 15 venues with incomplete metadata",
+          "Found 2 surface type inconsistencies"
+        ]
+      },
+      "timestamps": {
+        "status": "warning",
+        "checks": {
+          "staleness": {
+            "total_venues": 500,
+            "fresh_count": 495,
+            "stale_count": 5,
+            "staleness_threshold_days": 365
+          }
+        },
+        "issues": [
+          "Found 5 venues with stale metadata"
+        ]
+      },
+      "leakage_check": {
+        "status": "warning",
+        "checks": {
+          "retroactive_changes": {
+            "total_changes": 150,
+            "normal_changes": 148,
+            "suspicious_changes": 2
+          }
+        },
+        "issues": [
+          "Found 2 suspicious retroactive metadata changes"
+        ]
+      },
+      "audit_duration_seconds": 1.2e-05,
+      "overall_status": "warning"
+    },
+    "license_status": {
+      "source": "license_status",
+      "audit_timestamp": "2026-02-15T05:33:21.418922",
+      "availability": {
+        "status": "pass",
+        "sources_checked": [
+          "default"
+        ],
+        "details": {
+          "default": {
+            "has_license": true,
+            "license_type": "Commercial",
+            "status": "active",
+            "expiration": "2026-08-14T05:33:21.418944"
+          }
+        },
+        "issues": []
+      },
+      "data_quality": {
+        "status": "warning",
+        "checks": {
+          "required_fields": {
+            "expected": [
+              "license_type",
+              "license_holder",
+              "expiration_date",
+              "terms_url"
+            ],
+            "status": "pass"
+          },
+          "completeness": {
+            "total_sources": 5,
+            "complete_licenses": 4,
+            "incomplete_licenses": 1,
+            "completeness_rate": 0.8
+          }
+        },
+        "issues": [
+          "Found 1 incomplete license records"
+        ]
+      },
+      "timestamps": {
+        "status": "warning",
+        "checks": {
+          "expiration": {
+            "total_licenses": 5,
+            "active_licenses": 5,
+            "expired_count": 0,
+            "expiring_soon_count": 1,
+            "expiring_soon_threshold_days": 30
+          }
+        },
+        "issues": [
+          "Warning: 1 licenses expiring within 30 days"
+        ]
+      },
+      "leakage_check": {
+        "status": "pass",
+        "checks": {
+          "terms_compliance": {
+            "total_sources_checked": 5,
+            "compliant": 5,
+            "violations": 0
+          },
+          "attribution": {
+            "sources_requiring_attribution": 2,
+            "attributed_correctly": 2,
+            "missing_attribution": 0
+          }
+        },
+        "issues": []
+      },
+      "audit_duration_seconds": 3.5e-05,
+      "overall_status": "warning"
+    }
+  },
+  "summary": {
+    "total_connectors": 5,
+    "passed": 2,
+    "failed": 0,
+    "warnings": 3,
+    "not_available": 0,
+    "critical_issues": [],
+    "all_issues": [
+      "match_stats.data_quality: Found 50 matches with incomplete stats",
+      "match_stats.data_quality: Found 3 statistical inconsistencies",
+      "match_stats.timestamps: Found 2 stats with misaligned timestamps",
+      "venue_metadata.data_quality: Found 15 venues with incomplete metadata",
+      "venue_metadata.data_quality: Found 2 surface type inconsistencies",
+      "venue_metadata.timestamps: Found 5 venues with stale metadata",
+      "venue_metadata.leakage_check: Found 2 suspicious retroactive metadata changes",
+      "license_status.data_quality: Found 1 incomplete license records",
+      "license_status.timestamps: Warning: 1 licenses expiring within 30 days"
+    ]
+  },
+  "total_audit_duration_seconds": 0.000284
+}

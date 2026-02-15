@@ -1,0 +1,12 @@
+# Test configuration with leakage data
+local_csv_match_results:
+  csv_path: data/samples/match_results.csv
+
+local_csv_odds:
+  csv_path: data/samples/odds_with_leakage.csv
+
+reports:
+  output_dir: data/audit_outputs
+  formats:
+    - json
+    - markdown
